@@ -2,6 +2,12 @@ from random import *
 from tkinter import *
 from playsound import *
 
+'''PARTIE 1 : interface graphique'''
+
+
+
+
+'''PARTIE 2 : logique du jeu'''
 #valeur initial dès
 class valeur_dès_initiale:
     def __init__(self):
@@ -17,3 +23,5 @@ class valeur_dès_initiale:
 
 #fonction pour relancer les dès
     def relancer_dès(self, dés_à_relancer):
+
+'''PARTIE 3 : événements (appel des fonctions du jeu)'''
