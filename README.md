@@ -4,5 +4,5 @@
 
 ## Installation
 
-** 1.Installing the dependencies**:
+**1.Installing the dependencies**:
 ```pip install -r requirements.txt```
