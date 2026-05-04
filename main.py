@@ -9,7 +9,7 @@ class ApplicationPrincipale:
     def __init__(self, racine):
         self.racine = racine
         self.racine.title("Fish dice adventure")
-        self.racine.geometry("720x1080")
+        self.racine.geometry("1080x720")
         
         # Créer un conteneur principal
         self.conteneur = Frame(self.racine)
