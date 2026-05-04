@@ -2,5 +2,5 @@
 * A simple highschool game project
 * Basically a fishing-themed yahtzee
 
-**For installing the dependency**:
+**Installing the dependencies**:
 ```pip install -r requirements.txt```
