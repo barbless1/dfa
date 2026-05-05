@@ -7,6 +7,7 @@ class ApplicationPrincipale:
     def __init__(self, racine):
         self.racine = racine
         self.racine.title("Fish dice adventure")
+        self.racine.iconbitmap("illustration/icone.ico")
         self.racine.geometry("1920x1080")
         
         # Créer un conteneur principal
@@ -18,7 +19,7 @@ class ApplicationPrincipale:
         self.cadres = {}
         
         # Ajouter les pages
-        for F in (PageAccueil, InterfaceGraphique, Shop): #ajouter les autres pages ici AU FUR ET À MESURE
+        for F in (PageAccueil, InterfaceGraphique, Shop, Aquarium): #ajouter les autres pages ici AU FUR ET À MESURE
             cadre = F(self.conteneur, self)
             self.cadres[F] = cadre
             cadre.grid(row=0, column=0, sticky="nsew")
@@ -43,7 +44,7 @@ class PageAccueil(Frame):
     
         
         # Bouton pour démarrer le jeu
-        bouton_jouer = Button(self, text="Jouer", font=("Helvetica", 14),
+        bouton_jouer = Button(self, text="lancer !", font=("Helvetica", 14),
                              command=lambda: controleur.afficher_page(InterfaceGraphique),
                              width=20, height=2)
         bouton_jouer.pack(pady=20)
@@ -70,15 +71,20 @@ class InterfaceGraphique(Frame):
         label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
         label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.bouton_lancer = Button(self, text="Lancer les dés")
+        self.bouton_lancer = Button(self, text="Lancer les dés", font=("Helvetica", 18))
         self.bouton_lancer.pack(pady=5)
-
-
-        self.etiquette_resultat = Label(self, text="")
-        self.etiquette_resultat.pack(pady=10) #pady signifie "padding y" pour ajouter de l'espace vertical entre les éléments ;)
         
+        #pour appeler la methode d'une autre classe, on doit d'abord créer une instance de cette classe, ici "jeu" est une instance de la classe "fonctions_du_jeu"
+        self.jeu = fonctions_du_jeu() 
+        self.bouton_lancer.config(command=self.jeu.lancer_des)
+        self.bouton_lancer.place(x=700, y=900)
+        score = 0 
+        self.etiquette_resultat = Label(self, text=f"score : {score}", font=("Helvetica", 40), fg="orange")
+        self.etiquette_resultat.pack(pady=10) #pady signifie "padding y" pour ajouter de l'espace vertical entre les éléments ;)
+        self.etiquette_resultat.place(x=10, y=10)
+
         # Bouton pour retourner à l'accueil
-        self.bouton_accueil = Button(self, text="Retourner à l'accueil", 
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14),
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
 
@@ -93,7 +99,14 @@ class Shop(Frame):
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
 
-
+class Aquarium(Frame):
+    def __init__(self, parent, controleur):
+        Frame.__init__(self, parent)
+        self.controleur = controleur
+        arriere_plan = PhotoImage(file='illustration/aquarium.png', master=racine)
+        label_arriere_plan = Label(self, image=arriere_plan)
+        label_arriere_plan.image = arriere_plan
+        label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
 '''PARTIE 3 : logique du jeu'''
 #valeur initial dès
