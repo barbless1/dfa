@@ -63,15 +63,9 @@ class InterfaceGraphique(Frame):
         Frame.__init__(self, parent)
         self.controleur = controleur
 
-        # Créer les éléments de l'interface
-        self.etiquette = Label(self, text="Bienvenue au jeu de dés !", font=("Helvetica", 20, "bold"))
-        self.etiquette.pack(pady=10)
-
         self.bouton_lancer = Button(self, text="Lancer les dés", command=self.lancer_des)
         self.bouton_lancer.pack(pady=5)
 
-        self.bouton_relancer = Button(self, text="Relancer les dés", command=self.relancer_des)
-        self.bouton_relancer.pack(pady=5)
 
         self.etiquette_resultat = Label(self, text="")
         self.etiquette_resultat.pack(pady=10)
