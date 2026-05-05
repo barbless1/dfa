@@ -51,8 +51,7 @@ class PageAccueil(Frame):
         bouton_jouer.place(x=1471, y=665)
 
         # bouton mon invetaire (aquarium)
-        bouton_aquarium = Button(self, text="Mon aquarium", font=("Helvetica", 14), width=20, height=2)
-                                # command= A ECRIRE 
+        bouton_aquarium = Button(self, text="Mon aquarium", font=("Helvetica", 14), width=20, height=2, command=lambda: controleur.afficher_page(Aquarium))
         bouton_aquarium.pack(pady=20)
         bouton_aquarium.place(x=50, y=780)
 
@@ -77,7 +76,7 @@ class InterfaceGraphique(Frame):
         #pour appeler la methode d'une autre classe, on doit d'abord créer une instance de cette classe, ici "jeu" est une instance de la classe "fonctions_du_jeu"
         self.jeu = fonctions_du_jeu() 
         self.bouton_lancer.config(command=self.jeu.lancer_des)
-        self.bouton_lancer.place(x=700, y=900)
+        self.bouton_lancer.place(x=1920/2-100, y=900)
         score = 0 
         self.etiquette_resultat = Label(self, text=f"score : {score}", font=("Helvetica", 40), fg="orange")
         self.etiquette_resultat.pack(pady=10) #pady signifie "padding y" pour ajouter de l'espace vertical entre les éléments ;)
@@ -87,7 +86,7 @@ class InterfaceGraphique(Frame):
         self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14),
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
-
+        self.bouton_accueil.place(x=10, y=100)
 '''BOUTIQUE DU JEU : page du shop'''
 class Shop(Frame):
     def __init__(self, parent, controleur):
