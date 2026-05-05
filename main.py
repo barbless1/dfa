@@ -62,6 +62,10 @@ class InterfaceGraphique(Frame):
     def __init__(self, parent, controleur):
         Frame.__init__(self, parent)
         self.controleur = controleur
+        arriere_plan = PhotoImage(file='illustration/interface_partie_FDA.png', master=racine)
+        label_arriere_plan = Label(self, image=arriere_plan)
+        label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
+        label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.bouton_lancer = Button(self, text="Lancer les dés", command=self.lancer_des)
         self.bouton_lancer.pack(pady=5)
@@ -71,7 +75,7 @@ class InterfaceGraphique(Frame):
         self.etiquette_resultat.pack(pady=10)
         
         # Bouton pour retourner à l'accueil
-        self.bouton_accueil = Button(self, text="Retour à l'accueil", 
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil", 
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
 
