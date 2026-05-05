@@ -37,27 +37,26 @@ class PageAccueil(Frame):
     def __init__(self, parent, controleur):
         Frame.__init__(self, parent)
         self.controleur = controleur
-        
-        # Titre
-        etiquette_titre = Label(self, text="Fish Dice Adventure", font=("Helvetica", 36, "bold"))
-        etiquette_titre.pack(pady=50)
-        
-        # Sous-titre
-        etiquette_sous_titre = Label(self, text="Bienvenue au jeu de lancer de dés !", font=("Helvetica", 16))
-        etiquette_sous_titre.pack(pady=20)
+        arriere_plan = PhotoImage(file='illustration/arrière plan.png', master=racine)
+        label_arriere_plan = Label(self, image=arriere_plan)
+        label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
+        label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
+    
         
         # Bouton pour démarrer le jeu
         bouton_jouer = Button(self, text="Jouer", font=("Helvetica", 14),
                              command=lambda: controleur.afficher_page(InterfaceGraphique),
                              width=20, height=2)
         bouton_jouer.pack(pady=20)
+        bouton_jouer.place(x=90, y=90)
+
         
         # Bouton pour quitter
         bouton_quitter = Button(self, text="Quitter", font=("Helvetica", 14),
                                command=self.controleur.racine.quit,
                                width=20, height=2)
         bouton_quitter.pack(pady=10)
-
+        bouton_quitter.place(x=90, y=150)
 
 '''PARTIE 2 : interface graphique du jeu'''
 class InterfaceGraphique(Frame):
