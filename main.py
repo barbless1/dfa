@@ -55,6 +55,11 @@ class PageAccueil(Frame):
         bouton_aquarium.pack(pady=20)
         bouton_aquarium.place(x=462, y=545)
 
+        #bouton shop
+        bouton_shop = Button(self, text="Shop", font=("Helvetica", 14), width=20, height=2, command=None)
+        bouton_shop.pack(pady=20)
+        bouton_shop.place(x=100, y=900)
+
 '''PARTIE 2 : interface graphique du jeu'''
 class InterfaceGraphique(Frame):
     def __init__(self, parent, controleur):
