@@ -97,6 +97,11 @@ class Shop(Frame):
         label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
+        # Bouton pour retourner à l'accueil
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14),
+                                     command=lambda: controleur.afficher_page(PageAccueil))
+        self.bouton_accueil.pack(pady=10)
+        self.bouton_accueil.place(x=170, y=880)
 
 class Aquarium(Frame):
     def __init__(self, parent, controleur):
@@ -107,6 +112,11 @@ class Aquarium(Frame):
         label_arriere_plan.image = arriere_plan
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
+        # Bouton pour retourner à l'accueil
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14),
+                                     command=lambda: controleur.afficher_page(PageAccueil))
+        self.bouton_accueil.pack(pady=10)
+        self.bouton_accueil.place(x=165, y=800)
 '''PARTIE 3 : logique du jeu'''
 #valeur initial dès
 class fonctions_du_jeu:
