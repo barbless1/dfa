@@ -65,7 +65,7 @@ class InterfaceGraphique(Frame):
         label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
         label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.bouton_lancer = Button(self, text="Lancer les dés", command=self.lancer_des)
+        self.bouton_lancer = Button(self, text="Lancer les dés")
         self.bouton_lancer.pack(pady=5)
 
 
