@@ -1,6 +1,5 @@
 from random import *
 from tkinter import *
-from tkinter import ttk
 from playsound import *
 
 
