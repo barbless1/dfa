@@ -1,7 +1,6 @@
 from random import *
 from tkinter import *
-from playsound import *
-
+# from ... import * (librairie de son manquante, à décider plus tard )
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
