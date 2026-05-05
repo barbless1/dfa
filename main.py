@@ -47,15 +47,13 @@ class PageAccueil(Frame):
                              command=lambda: controleur.afficher_page(InterfaceGraphique),
                              width=20, height=2)
         bouton_jouer.pack(pady=20)
-        bouton_jouer.place(x=1000, y=90)
+        bouton_jouer.place(x=1471, y=665)
 
-        
-        # Bouton pour quitter
-        bouton_quitter = Button(self, text="Quitter", font=("Helvetica", 14),
-                               command=self.controleur.racine.quit,
-                               width=20, height=2)
-        bouton_quitter.pack(pady=10)
-        bouton_quitter.place(x=90, y=150)
+        # bouton mon invetaire (aquarium)
+        bouton_aquarium = Button(self, text="Mon aquarium", font=("Helvetica", 14), width=20, height=2)
+                                # command= A ECRIRE 
+        bouton_aquarium.pack(pady=20)
+        bouton_aquarium.place(x=462, y=545)
 
 '''PARTIE 2 : interface graphique du jeu'''
 class InterfaceGraphique(Frame):
@@ -100,8 +98,8 @@ class valeur_dès_initiale:
         return [self.de1, self.de2, self.de3, self.de4, self.de5]
 
 #fonction pour relancer les dès
-    def relancer_dès(self, des_a_relancer):
-        pass
+   # def relancer_dès(self, des_a_relancer):
+    
 
 
 '''PARTIE 4 : Lancement de l'application et événement '''
