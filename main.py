@@ -48,7 +48,7 @@ class PageAccueil(Frame):
                              command=lambda: controleur.afficher_page(InterfaceGraphique),
                              width=20, height=2)
         bouton_jouer.pack(pady=20)
-        bouton_jouer.place(x=90, y=90)
+        bouton_jouer.place(x=1000, y=90)
 
         
         # Bouton pour quitter
