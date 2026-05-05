@@ -53,12 +53,12 @@ class PageAccueil(Frame):
         bouton_aquarium = Button(self, text="Mon aquarium", font=("Helvetica", 14), width=20, height=2)
                                 # command= A ECRIRE 
         bouton_aquarium.pack(pady=20)
-        bouton_aquarium.place(x=462, y=545)
+        bouton_aquarium.place(x=50, y=780)
 
         #bouton shop
         bouton_shop = Button(self, text="Shop", font=("Helvetica", 14), width=20, height=2, command=lambda: controleur.afficher_page(Shop))
         bouton_shop.pack(pady=20)
-        bouton_shop.place(x=100, y=900)
+        bouton_shop.place(x=50, y=850)
 
 '''PARTIE 2 : interface graphique du jeu'''
 class InterfaceGraphique(Frame):
@@ -82,7 +82,7 @@ class InterfaceGraphique(Frame):
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
 
-'''shop'''
+'''BOUTIQUE DU JEU : page du shop'''
 class Shop(Frame):
     def __init__(self, parent, controleur):
         Frame.__init__(self, parent)
@@ -91,8 +91,6 @@ class Shop(Frame):
         label_arriere_plan = Label(self, image=arriere_plan)
         label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
-
-
 
 
 '''PARTIE 3 : logique du jeu'''
