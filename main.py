@@ -73,19 +73,13 @@ class InterfaceGraphique(Frame):
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
 
-    def lancer_des(self):
-        # Logique pour lancer les dés et afficher le résultat
-        pass
 
-    def relancer_des(self):
-        # Logique pour relancer les dés sélectionnés et afficher le résultat
-        pass
 
 
 
 '''PARTIE 3 : logique du jeu'''
 #valeur initial dès
-class valeur_dès_initiale:
+class fonctions_du_jeu:
     def __init__(self):
         self.de1 = randint(1, 6)
         self.de2 = randint(1, 6)
@@ -98,9 +92,14 @@ class valeur_dès_initiale:
         return [self.de1, self.de2, self.de3, self.de4, self.de5]
 
 #fonction pour relancer les dès
-   # def relancer_dès(self, des_a_relancer):
     
+    def lancer_des(self):
+        # Logique pour lancer les dés et afficher le résultat
+        pass
 
+    def relancer_des(self):
+        # Logique pour relancer les dés sélectionnés et afficher le résultat
+        pass
 
 '''PARTIE 4 : Lancement de l'application et événement '''
 if __name__ == "__main__":
