@@ -75,7 +75,7 @@ class InterfaceGraphique(Frame):
 
 
         self.etiquette_resultat = Label(self, text="")
-        self.etiquette_resultat.pack(pady=10)
+        self.etiquette_resultat.pack(pady=10) #pady signifie "padding y" pour ajouter de l'espace vertical entre les éléments ;)
         
         # Bouton pour retourner à l'accueil
         self.bouton_accueil = Button(self, text="Retourner à l'accueil", 
@@ -90,7 +90,7 @@ class Shop(Frame):
         arriere_plan = PhotoImage(file='illustration/shop.png', master=racine)
         label_arriere_plan = Label(self, image=arriere_plan)
         label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
-        label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
+        label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
 
 
