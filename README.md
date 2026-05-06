@@ -12,5 +12,5 @@
 **1 [Installing the dependencies]**:
 ```pip install -r requirements.txt```
 
-**1 [Run the main python file]**:
+**2 [Run the main python file]**:
 ```python main.py```
