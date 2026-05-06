@@ -1,15 +1,14 @@
-from random import *
-from tkinter import *
-# from ... import * (librairie de son manquante, à décider plus tard )
+from random import * #Génération de pseudo-hasard pour les mécanismes reposant sur l'aléatoire (dés, case opening)
+from tkinter import * #Moteur graphique / Interface 
+from pyglet import * #Module utilisé pour le son 
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
     def __init__(self, racine):
         self.racine = racine
-        self.racine.title("Fish dice adventure")
-        self.racine.iconbitmap("illustration/icone.ico")
         self.racine.geometry("1920x1080")
-        
+        icon = PhotoImage(file="illustration/icone.png") #.ico est une extension propre à windows, pour que ça marche sur tous les systèmes, on utilise .png 
+        self.racine.iconphoto(True, icon)
         # Créer un conteneur principal
         self.conteneur = Frame(self.racine)
         self.conteneur.pack(side="top", fill="both", expand=True)
@@ -87,6 +86,7 @@ class InterfaceGraphique(Frame):
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=10, y=100)
+
 '''BOUTIQUE DU JEU : page du shop'''
 class Shop(Frame):
     def __init__(self, parent, controleur):
@@ -117,6 +117,7 @@ class Aquarium(Frame):
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=165, y=800)
+
 '''PARTIE 3 : logique du jeu'''
 #valeur initial dès
 class fonctions_du_jeu:
@@ -153,6 +154,7 @@ class fonctions_du_jeu:
                 self.de4 = randint(1, 6)
             elif index == 5:
                 self.de5 = randint(1, 6)
+
 
 
 '''PARTIE 4 : Lancement de l'application et événement '''

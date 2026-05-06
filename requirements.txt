@@ -1,3 +1,2 @@
-simpleaudio==latest #Je dois savoir quelle librairie utiliser en fonction de ce qui marchera selon la version de python (simpleaudio, puresound, winaudio, pygame etc...)
+pyglet==latest  
 tkinter==latest
-random==latest
