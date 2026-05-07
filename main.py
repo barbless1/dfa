@@ -1,6 +1,6 @@
-from random import * #Génération de pseudo-hasard pour les mécanismes reposant sur l'aléatoire (dés, case opening)
+from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
 from tkinter import * #Moteur graphique / Interface 
-from pyglet import * #Module utilisé pour le son 
+#from pyglet import * #Module utilisé pour le son 
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -86,7 +86,12 @@ class InterfaceGraphique(Frame):
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=10, y=100)
-
+        
+        #mouvement main
+        self.bras = Image.open('image.png')
+        self.img_bras = ImageTk.PhotoImage(self.bras)
+        self.bras_id = canvas.create_image(200, 200, image=self.img_bras)      
+        
 '''BOUTIQUE DU JEU : page du shop'''
 class Shop(Frame):
     def __init__(self, parent, controleur):
