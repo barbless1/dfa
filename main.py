@@ -166,11 +166,7 @@ class fonctions_du_jeu:
         self.de4 = randint(1, 6)
         self.de5 = randint(1, 6)
         
-        # Mettre à jour l'interface si elle est disponible
-        if self.interface:
-            self.interface.canvas.itemconfig(self.interface.bras_id, image=self.interface.img_bras_ouverte)
-            self.interface.etiquette_resultat.config(text=f"score : {sum(self.liste_valeurs_dès())}")
-
+        
     def relancer_des(self, des_a_relancer):
         """
         Relance les dés spécifiés par leurs indices.
