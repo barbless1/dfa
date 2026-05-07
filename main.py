@@ -121,8 +121,7 @@ class Shop(Frame):
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
         # Bouton pour retourner à l'accueil
-        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14),
-                                     command=lambda: controleur.afficher_page(PageAccueil))
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14), command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=170, y=880)
 
@@ -136,8 +135,7 @@ class Aquarium(Frame):
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
         # Bouton pour retourner à l'accueil
-        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14),
-                                     command=lambda: controleur.afficher_page(PageAccueil))
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Helvetica", 14), command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=165, y=800)
 
@@ -184,6 +182,124 @@ class fonctions_du_jeu:
             elif index == 5:
                 self.de5 = randint(1, 6)
 
+    # FONCTIONS POUR DÉTERMINER LES COMBINAISONS DU YAMS
+    
+    def est_yams(self):
+        """Vérifie si c'est un Yams (5 dés identiques)"""
+        dés = self.liste_valeurs_dès()
+        return len(set(dés)) == 1
+    
+    def est_carré(self):
+        """Vérifie si c'est un Carré (4 dés identiques)"""
+        dés = self.liste_valeurs_dès()
+        compte = {}
+        for d in dés:
+            compte[d] = compte.get(d, 0) + 1
+        return 4 in compte.values()
+    
+    def est_full(self):
+        """Vérifie si c'est un Full (3 d'une valeur + 2 d'une autre)"""
+        dés = self.liste_valeurs_dès()
+        compte = {}
+        for d in dés:
+            compte[d] = compte.get(d, 0) + 1
+        valeurs = sorted(compte.values())
+        return valeurs == [2, 3]
+    
+    def est_grande_suite(self):
+        """Vérifie si c'est une Grande Suite (5 dés consécutifs)"""
+        dés = sorted(self.liste_valeurs_dès())
+        # Petite suite: [1,2,3,4,5] ou [2,3,4,5,6]
+        return dés == [1, 2, 3, 4, 5] or dés == [2, 3, 4, 5, 6]
+    
+    def est_petite_suite(self):
+        """Vérifie si c'est une Petite Suite (4 dés consécutifs)"""
+        dés = set(self.liste_valeurs_dès())
+        petites_suites = [
+            {1, 2, 3, 4},
+            {2, 3, 4, 5},
+            {3, 4, 5, 6}
+        ]
+        for suite in petites_suites:
+            if suite.issubset(dés):
+                return True
+        return False
+    
+    def est_brelan(self):
+        """Vérifie si c'est un Brelan (3 dés identiques)"""
+        dés = self.liste_valeurs_dès()
+        compte = {}
+        for d in dés:
+            compte[d] = compte.get(d, 0) + 1
+        return 3 in compte.values()
+    
+    def est_deux_paires(self):
+        """Vérifie si c'est deux paires"""
+        dés = self.liste_valeurs_dès()
+        compte = {}
+        for d in dés:
+            compte[d] = compte.get(d, 0) + 1
+        paires = [v for v in compte.values() if v == 2]
+        return len(paires) == 2
+    
+    def est_paire(self):
+        """Vérifie s'il y a une paire (2 dés identiques)"""
+        dés = self.liste_valeurs_dès()
+        compte = {}
+        for d in dés:
+            compte[d] = compte.get(d, 0) + 1
+        return 2 in compte.values()
+    
+    def compter_valeur(self, valeur):
+        """Compte le nombre de dés ayant une valeur spécifique"""
+        dés = self.liste_valeurs_dès()
+        return dés.count(valeur) * valeur
+    
+    def chance(self):
+        """Retourne la somme de tous les dés"""
+        return sum(self.liste_valeurs_dès())
+    
+    def determiner_combinaison(self):
+        """Détermine la meilleure combinaison et retourne son nom et sa valeur"""
+        combinaisons = []
+        
+        if self.est_yams():
+            combinaisons.append(("Yams", 50))
+        if self.est_carré():
+            combinaisons.append(("Carré", sum(self.liste_valeurs_dès())))
+        if self.est_full():
+            combinaisons.append(("Full", 25))
+        if self.est_grande_suite():
+            combinaisons.append(("Grande Suite", 40))
+        if self.est_petite_suite():
+            combinaisons.append(("Petite Suite", 30))
+        if self.est_brelan():
+            combinaisons.append(("Brelan", sum(self.liste_valeurs_dès())))
+        if self.est_deux_paires():
+            combinaisons.append(("Deux Paires", sum(self.liste_valeurs_dès())))
+        if self.est_paire():
+            combinaisons.append(("Paire", sum(self.liste_valeurs_dès())))
+        
+        # Ajouter les combinaisons spéciales (1 à 6)
+        for valeur in range(1, 7):
+            total = self.compter_valeur(valeur)
+            if total > 0:
+                noms = {1: "As", 2: "Deux", 3: "Trois", 4: "Quatre", 5: "Cinq", 6: "Six"}
+                combinaisons.append((noms[valeur], total))
+        
+        # Ajouter chance
+        combinaisons.append(("Chance", self.chance()))
+        
+        return combinaisons
+    
+    def meilleure_combinaison(self):
+        """Retourne la meilleure combinaison par valeur"""
+        combinaisons = self.determiner_combinaison()
+        if combinaisons:
+            return max(combinaisons, key=lambda x: x[1])
+        return ("Rien", 0)
+
+    
 
 
 '''PARTIE 4 : Lancement de l'application et événement '''
