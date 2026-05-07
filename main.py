@@ -1,6 +1,5 @@
 from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
-from tkinter import * #Moteur graphique / Interface 
-#from pyglet import * #Module utilisé pour le son 
+from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk#from pyglet import * #Module utilisé pour le son 
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -64,10 +63,11 @@ class InterfaceGraphique(Frame):
     def __init__(self, parent, controleur):
         Frame.__init__(self, parent)
         self.controleur = controleur
-        arriere_plan = PhotoImage(file='illustration/tronc_arbre_zoom.png', master=racine)
-        label_arriere_plan = Label(self, image=arriere_plan)
-        label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
-        label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
+        self.canvas = Canvas(self)
+        self.canvas.place(x=0, y=0, relwidth=1, relheight=1)
+        arriere_plan = PhotoImage(file='illustration/tronc_arbre_zoom.png')
+        self.canvas.create_image(0, 0, image=arriere_plan, anchor='nw')
+        self.arriere_plan = arriere_plan
 
         self.bouton_lancer = Button(self, text="Lancer les dés", font=("Helvetica", 18))
         self.bouton_lancer.pack(pady=5)
@@ -86,12 +86,24 @@ class InterfaceGraphique(Frame):
                                      command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=10, y=100)
-        
+
+
         #mouvement main
-        self.bras = Image.open('image.png')
-        self.img_bras = ImageTk.PhotoImage(self.bras)
-        self.bras_id = canvas.create_image(200, 200, image=self.img_bras)      
-        
+        self.img_bras = PhotoImage(file='illustration/main_fermé.png')
+        self.bras_id = self.canvas.create_image(200, 200, image=self.img_bras)
+        self.canvas.bind("<Button-1>", self.start_drag)
+        self.canvas.bind("<B1-Motion>", self.drag)
+
+    def start_drag(self, event):
+        self.last_x, self.last_y = event.x, event.y
+
+    def drag(self, event):
+        dx = event.x - self.last_x
+        dy = event.y - self.last_y
+        self.canvas.move(self.bras_id, dx, dy)
+        self.last_x, self.last_y = event.x, event.y
+
+      
 '''BOUTIQUE DU JEU : page du shop'''
 class Shop(Frame):
     def __init__(self, parent, controleur):
