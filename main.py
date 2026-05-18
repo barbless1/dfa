@@ -186,7 +186,7 @@ class InterfaceGraphique(Frame):
         """Affiche la combinaison finale et le score."""
         combinaison = "-".join(map(str, self.valeurs_des))
         score = sum(self.valeurs_des)
-        self.canvas.create_text(1920 / 2, 1080 / 2 + 200, text=f"Combinaison : {combinaison}\nScore : {score}",
+        self.canvas.create_text(1920 / 2, 1080 / 2 + 300, text=f"Combinaison : {combinaison}\nScore : {score}",
                                  font=("Arial", 18), fill="blue")
 
     def reset_page(self):
@@ -316,7 +316,7 @@ class fonctions_du_jeu:
             {3, 4, 5, 6}
         ]
         for suite in petites_suites:
-            if suite.issubset(dés):
+            if suite.issubset(dés): #cette focntion est incroyable elle vérifie si la condition s'applique et renvoie True 
                 return True
         return False
     
