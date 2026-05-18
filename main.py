@@ -1,5 +1,6 @@
 from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
-from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk#from pyglet import * #Module utilisé pour le son 
+from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk
+from playsound3 import playsound #Permet de jouer les sons / musiques
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -194,7 +195,7 @@ class InterfaceGraphique(Frame):
         est_suite = len(set(valeurs)) == 5 and valeurs[-1] - valeurs[0] == 4
 
         if counts == [5]:
-            return "Yahtzee"
+            return "Yams"
         if est_suite:
             return "Suite"
         if counts == [2, 3]:
