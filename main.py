@@ -1,5 +1,7 @@
+import os
 from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
-from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk#from pyglet import * #Module utilisé pour le son 
+from tkinter import * #Moteur graphique / Interface
+# from PIL import Image, ImageTk # si besoin pour d'autres formats d'image
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -16,6 +18,9 @@ class ApplicationPrincipale:
         self.conteneur.grid_columnconfigure(0, weight=1)
         
         self.cadres = {}
+        self.monnaie = 0
+        self.achats = set()
+        self.poissons = self.charger_poissons()
         
         # Ajouter les pages
         for F in (PageAccueil, InterfaceGraphique, Shop, Aquarium): #ajouter les autres pages ici AU FUR ET À MESURE
@@ -28,7 +33,20 @@ class ApplicationPrincipale:
     
     def afficher_page(self, contenu):
         cadre = self.cadres[contenu]
+        if hasattr(cadre, "rafraichir"):
+            cadre.rafraichir()
         cadre.tkraise()
+
+    def charger_poissons(self):
+        dossier = os.path.join(os.path.dirname(os.path.abspath(__file__)), "illustration", "poisson")
+        fichiers = [f for f in os.listdir(dossier) if f.lower().endswith((".png", ".gif", ".jpg", ".jpeg"))]
+        fichiers.sort()
+        items = []
+        for index, fichier in enumerate(fichiers):
+            nom = os.path.splitext(fichier)[0]
+            prix = 200 + 50 * index
+            items.append({"fichier": fichier, "nom": nom, "prix": prix})
+        return items
 
 
 '''PARTIE 1 : Page d'accueil'''
@@ -92,6 +110,8 @@ class InterfaceGraphique(Frame):
         self.etiquette_combinaison.place(x=1920 / 2, y=1080 / 2 + 300)
         self.etiquette_score = Label(self, text="Score : -", font=("Arial", 18), fg="blue")
         self.etiquette_score.place(x=1920 / 2, y=1080 / 2 + 340)
+        self.etiquette_monnaie = Label(self, text=f"Monnaie : {self.controleur.monnaie} points", font=("Arial", 18), fg="black")
+        self.etiquette_monnaie.place(x=10, y=180)
 
         # Mouvement main
         self.img_bras = PhotoImage(file='illustration/main_fermé.png')
@@ -111,6 +131,7 @@ class InterfaceGraphique(Frame):
         self.drag_active = False
         self.des_ids = []
         self.boutons_garder = []
+        self.score_ajoute = False
 
     def start_drag(self, event):
         self.last_x, self.last_y = event.x, event.y
@@ -131,7 +152,8 @@ class InterfaceGraphique(Frame):
         if not self.lancer_effectue:
             self.valeurs_des = [randint(1, 6) for _ in range(5)]
             self.des_gardes = [False] * 5
-            self.lancees_restantes = 3
+            self.lancees_restantes = 2
+            self.score_ajoute = False
             self.afficher_des()
             self.lancer_effectue = True
             self.bouton_relancer.config(state="normal")
@@ -163,20 +185,22 @@ class InterfaceGraphique(Frame):
             bouton.destroy()
         self.boutons_garder = []
 
+    def update_monnaie_label(self):
+        self.etiquette_monnaie.config(text=f"Monnaie : {self.controleur.monnaie} points")
+
     def garder_de(self, index):
         """Marque un dé comme gardé ou non."""
         self.des_gardes[index] = not self.des_gardes[index]
         self.afficher_des()
 
     def preparer_relance(self):
-        if not self.lancer_effectue or self.lancees_restantes <= 1:
+        if not self.lancer_effectue or self.lancees_restantes <= 0:
             return
         self.relaunch_ready = True
         self.canvas.itemconfig(self.bras_id, image=self.img_bras)
 
     def relancer_non_gardes(self):
-        if self.lancees_restantes <= 1:
-            self.afficher_resultat()
+        if self.lancees_restantes <= 0:
             return
         for i in range(5):
             if not self.des_gardes[i]:
@@ -184,7 +208,7 @@ class InterfaceGraphique(Frame):
         self.lancees_restantes -= 1
         self.afficher_des()
 
-        if self.lancees_restantes <= 1:
+        if self.lancees_restantes <= 0:
             self.afficher_resultat()
 
     def nom_combinaison(self):
@@ -215,6 +239,11 @@ class InterfaceGraphique(Frame):
         score = sum(self.valeurs_des)
         self.etiquette_combinaison.config(text=f"Combinaison : {self.nom_combinaison()} ({combinaison})")
         self.etiquette_score.config(text=f"Score : {score}")
+        self.etiquette_resultat.config(text=f"{score} points")
+        if not self.score_ajoute:
+            self.controleur.monnaie += score
+            self.score_ajoute = True
+            self.update_monnaie_label()
 
     def reset_page(self):
         """Réinitialise la page de lancer de dés."""
@@ -229,6 +258,8 @@ class InterfaceGraphique(Frame):
         self.bouton_relancer.config(state="disabled")
         self.etiquette_combinaison.config(text="Combinaison : -")
         self.etiquette_score.config(text="Score : -")
+        self.etiquette_resultat.config(text="0 points")
+        self.score_ajoute = False
 
       
 '''BOUTIQUE DU JEU : page du shop'''
@@ -238,16 +269,73 @@ class Shop(Frame):
         self.controleur = controleur
         arriere_plan = PhotoImage(file='illustration/shop.png', master=racine)
         label_arriere_plan = Label(self, image=arriere_plan)
-        label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
-        label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center') 
+        label_arriere_plan.image = arriere_plan
+        label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
-        # Bouton pour retourner à l'accueil
+        self.etiquette_monnaie = Label(self, text=f"Monnaie : {self.controleur.monnaie} points", font=("Arial", 18), fg="black", bg="white")
+        self.etiquette_monnaie.place(x=715, y=20)
+        self.info_achat = Label(self, text="", font=("Arial", 14), fg="red", bg="white")
+        self.info_achat.place(x=980, y=20)
+
+        self.zone_achat = Frame(self, bg="white", bd=2, relief="solid")
+        self.zone_achat.place(x=715, y=45, width=1157, height=768)
+
+        self.poisson_images = []
+        self.poisson_buttons = []
+
         self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Arial", 14), command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=165, y=880)
 
+    def rafraichir(self):
+        self.etiquette_monnaie.config(text=f"Monnaie : {self.controleur.monnaie} points")
+        self.info_achat.config(text="")
+        for child in self.zone_achat.winfo_children():
+            child.destroy()
+        self.poisson_images = []
+        self.poisson_buttons = []
 
-        
+        for idx, item in enumerate(self.controleur.poissons):
+            row = idx // 4
+            col = idx % 4
+            item_frame = Frame(self.zone_achat, width=250, height=280, bg="white")
+            item_frame.grid(row=row, column=col, padx=10, pady=10)
+            item_frame.grid_propagate(False)
+            item_frame.pack_propagate(False)
+
+            chemin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "illustration", "poisson", item["fichier"])
+            img = PhotoImage(file=chemin)
+            self.poisson_images.append(img)
+            label_img = Label(item_frame, image=img, bg="white")
+            label_img.pack(padx=5, pady=(5, 0))
+            label_nom = Label(item_frame, text=item["nom"], font=("Arial", 14), bg="white")
+            label_nom.pack()
+            label_prix = Label(item_frame, text=f"{item['prix']} pts", font=("Arial", 12), bg="white")
+            label_prix.pack()
+
+            if item["fichier"] in self.controleur.achats:
+                btn = Button(item_frame, text="Acheté", state="disabled", width=14)
+            else:
+                btn = Button(item_frame, text=f"Acheter ({item['prix']} pts)", command=lambda idx=idx: self.acheter_poisson(idx), width=14)
+            btn.pack(pady=5)
+            self.poisson_buttons.append(btn)
+
+        for i in range(4):
+            self.zone_achat.grid_columnconfigure(i, weight=1)
+
+    def acheter_poisson(self, index):
+        item = self.controleur.poissons[index]
+        if item["fichier"] in self.controleur.achats:
+            return
+        if self.controleur.monnaie < item["prix"]:
+            self.info_achat.config(text="Pas assez de points pour cet achat.")
+            return
+        self.controleur.monnaie -= item["prix"]
+        self.controleur.achats.add(item["fichier"])
+        self.info_achat.config(text=f"Poisson {item['nom']} acheté !")
+        self.rafraichir()
+
+
 '''AQUARIUM : Inventaire des poissons obtenus'''
 class Aquarium(Frame):
     def __init__(self, parent, controleur):
@@ -258,10 +346,42 @@ class Aquarium(Frame):
         label_arriere_plan.image = arriere_plan
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
-        # Bouton pour retourner à l'accueil
+        self.zone_aquarium = Frame(self, bg="white", bd=2, relief="solid")
+        self.zone_aquarium.place(x=715, y=45, width=1157, height=768)
+        self.aquarium_images = []
+
         self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Arial", 14), command=lambda: controleur.afficher_page(PageAccueil))
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=165, y=800)
+
+    def rafraichir(self):
+        for child in self.zone_aquarium.winfo_children():
+            child.destroy()
+        self.aquarium_images = []
+
+        achats = list(self.controleur.achats)
+        if not achats:
+            Label(self.zone_aquarium, text="Aucun poisson acheté.", font=("Arial", 18), bg="white").place(relx=0.5, rely=0.5, anchor='center')
+            return
+
+        for idx, fichier in enumerate(achats):
+            row = idx // 4
+            col = idx % 4
+            item_frame = Frame(self.zone_aquarium, width=250, height=280, bg="white")
+            item_frame.grid(row=row, column=col, padx=10, pady=10)
+            item_frame.grid_propagate(False)
+            item_frame.pack_propagate(False)
+
+            chemin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "illustration", "poisson", fichier)
+            img = PhotoImage(file=chemin)
+            self.aquarium_images.append(img)
+            label_img = Label(item_frame, image=img, bg="white")
+            label_img.pack(padx=5, pady=(5, 0))
+            label_nom = Label(item_frame, text=os.path.splitext(fichier)[0], font=("Arial", 14), bg="white")
+            label_nom.pack()
+
+        for i in range(4):
+            self.zone_aquarium.grid_columnconfigure(i, weight=1)
 
 '''PARTIE 3 : logique du jeu'''
 #valeur initial dès
