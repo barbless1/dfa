@@ -70,43 +70,46 @@ class InterfaceGraphique(Frame):
         arriere_plan = PhotoImage(file='illustration/tronc_arbre_zoom.png')
         self.canvas.create_image(0, 0, image=arriere_plan, anchor='nw')
         self.arriere_plan = arriere_plan
-        '''
-        self.bouton_lancer = Button(self, text="Lancer les dés", font=("Arial", 18))
-        self.bouton_lancer.pack(pady=5)
-        
-        #pour appeler la methode d'une autre classe, on doit d'abord créer une instance de cette classe, ici "jeu" est une instance de la classe "fonctions_du_jeu"
-        self.jeu = fonctions_du_jeu(self) 
-        self.bouton_lancer.config(command=self.jeu.lancer_des)
-        self.bouton_lancer.place(x=1920/2-100, y=900)'''
-        score = 0 
+
+        score = 0
         self.etiquette_resultat = Label(self, text=f"{score} points", font=("Arial", 40), fg="black")
-        self.etiquette_resultat.pack(pady=10) #pady signifie "padding y" pour ajouter de l'espace vertical entre les éléments ;)
+        self.etiquette_resultat.pack(pady=10)
         self.etiquette_resultat.place(x=10, y=10)
 
         # Bouton pour retourner à l'accueil
-        self.bouton_accueil = Button(self, text="Retourner à l'accueil",font=("Arial", 14),
+        self.bouton_accueil = Button(self, text="Retourner à l'accueil", font=("Arial", 14),
                                      command=lambda: [self.reset_page(), controleur.afficher_page(PageAccueil)])
         self.bouton_accueil.pack(pady=10)
         self.bouton_accueil.place(x=10, y=100)
 
-         # Bouton pour relancer les dés
+        # Bouton pour relancer les dés
         self.bouton_relancer = Button(self, text="Relancer les dés", font=("Arial", 14),
-                                      command=self.relancer_des)
+                                      command=self.preparer_relance, state="disabled")
         self.bouton_relancer.pack(pady=10)
         self.bouton_relancer.place(x=1920 / 2 - 100, y=1080 / 2 + 150)
 
-        #mouvement main
+        # Mouvement main
         self.img_bras = PhotoImage(file='illustration/main_fermé.png')
         self.img_bras_ouverte = PhotoImage(file='illustration/main_ouverte.png')
-        # Créer l'image de la main fermée au centre
         self.bras_id = self.canvas.create_image(1920 / 2, 1080 / 2, image=self.img_bras)
         self.canvas.coords(self.bras_id, 1920 / 2, 1080 / 2)
         self.canvas.bind("<Button-1>", self.start_drag)
         self.canvas.bind("<B1-Motion>", self.drag)
         self.canvas.bind("<ButtonRelease-1>", self.release_drag)
 
+        # État du jeu
+        self.valeurs_des = []
+        self.des_gardes = [False] * 5
+        self.lancer_effectue = False
+        self.lancees_restantes = 3
+        self.relaunch_ready = False
+        self.drag_active = False
+        self.des_ids = []
+        self.boutons_garder = []
+
     def start_drag(self, event):
         self.last_x, self.last_y = event.x, event.y
+        self.drag_active = True
 
     def drag(self, event):
         dx = event.x - self.last_x
@@ -115,75 +118,88 @@ class InterfaceGraphique(Frame):
         self.last_x, self.last_y = event.x, event.y
 
     def release_drag(self, event):
-        # Changer l'image en main ouverte
+        if not self.drag_active:
+            return
+        self.drag_active = False
         self.canvas.itemconfig(self.bras_id, image=self.img_bras_ouverte)
 
-        # Initialiser les dés uniquement au premier lancer
-        if not hasattr(self, 'lancer_effectue') or not self.lancer_effectue:
+        if not self.lancer_effectue:
             self.valeurs_des = [randint(1, 6) for _ in range(5)]
             self.des_gardes = [False] * 5
             self.lancees_restantes = 3
             self.afficher_des()
             self.lancer_effectue = True
+            self.bouton_relancer.config(state="normal")
+        elif self.relaunch_ready:
+            self.relaunch_ready = False
+            self.relancer_non_gardes()
 
     def afficher_des(self):
         """Affiche les dés avec leurs valeurs actuelles."""
-        self.des_ids = []
-        self.boutons_garder = []  # Liste des boutons "Garder"
-        x, y = 1920 / 2 - 150, 1080 / 2 - 50  # Position initiale des dés 
+        self.clear_des()
+        x, y = 1920 / 2 - 150, 1080 / 2 - 50
         for i, valeur in enumerate(self.valeurs_des):
             couleur = "green" if self.des_gardes[i] else "white"
-            des_id = self.canvas.create_rectangle(x, y, x + 50, y + 50, fill=couleur) #ICI UTILISER LES IMAGES DE DES A ITERER AVEC LE NOM DE FICHIER 
+            des_id = self.canvas.create_rectangle(x, y, x + 50, y + 50, fill=couleur)
             self.canvas.create_text(x + 25, y + 25, text=str(valeur), font=("Arial", 18))
             self.des_ids.append(des_id)
 
-            # Ajouter un bouton "Garder" sous chaque dé
             bouton = Button(self, text="Garder", command=lambda idx=i: self.garder_de(idx))
             bouton.place(x=x + 10, y=y + 60)
             self.boutons_garder.append(bouton)
 
-            x += 60  # Espacement entre les dés
+            x += 60
+
+    def clear_des(self):
+        for des_id in self.des_ids:
+            self.canvas.delete(des_id)
+        self.des_ids = []
+        for bouton in self.boutons_garder:
+            bouton.destroy()
+        self.boutons_garder = []
 
     def garder_de(self, index):
         """Marque un dé comme gardé ou non."""
         self.des_gardes[index] = not self.des_gardes[index]
         self.afficher_des()
 
-    def relancer_des(self):
-        """Relance les dés non gardés, avec une limite de 3 lancées."""
-        if self.lancees_restantes > 0:
-            self.lancer_des()
-            self.lancees_restantes -= 1
-            self.canvas.itemconfig(self.bras_id, image=self.img_bras)  # Revenir à la main fermée
-            self.canvas.bind("<ButtonRelease-1>", self.release_drag)  # Réactiver le clic pour relancer
-        else:
+    def preparer_relance(self):
+        if not self.lancer_effectue or self.lancees_restantes <= 0:
+            return
+        self.relaunch_ready = True
+        self.canvas.itemconfig(self.bras_id, image=self.img_bras)
+
+    def relancer_non_gardes(self):
+        if self.lancees_restantes <= 0:
+            self.afficher_resultat()
+            return
+        for i in range(5):
+            if not self.des_gardes[i]:
+                self.valeurs_des[i] = randint(1, 6)
+        self.lancees_restantes -= 1
+        self.afficher_des()
+
+        if self.lancees_restantes <= 0:
             self.afficher_resultat()
 
     def afficher_resultat(self):
         """Affiche la combinaison finale et le score."""
         combinaison = "-".join(map(str, self.valeurs_des))
-        score = sum(self.valeurs_des)  # Exemple de calcul de score
+        score = sum(self.valeurs_des)
         self.canvas.create_text(1920 / 2, 1080 / 2 + 200, text=f"Combinaison : {combinaison}\nScore : {score}",
                                  font=("Arial", 18), fill="blue")
 
     def reset_page(self):
         """Réinitialise la page de lancer de dés."""
-        # Remettre la main fermée au centre
         self.canvas.coords(self.bras_id, 1920 / 2, 1080 / 2)
         self.canvas.itemconfig(self.bras_id, image=self.img_bras)
-
-        # Supprimer les dés affichés et les boutons "Garder"
-        if hasattr(self, 'des_ids'):
-            for des_id in self.des_ids:
-                self.canvas.delete(des_id)
-        self.des_ids = []
-
-        if hasattr(self, 'boutons_garder'):
-            for bouton in self.boutons_garder:
-                bouton.destroy()
-        self.boutons_garder = []
-
+        self.clear_des()
         self.lancer_effectue = False
+        self.lancees_restantes = 3
+        self.relaunch_ready = False
+        self.des_gardes = [False] * 5
+        self.valeurs_des = []
+        self.bouton_relancer.config(state="disabled")
 
       
 '''BOUTIQUE DU JEU : page du shop'''
