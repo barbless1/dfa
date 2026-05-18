@@ -298,7 +298,7 @@ class Shop(Frame):
         for idx, item in enumerate(self.controleur.poissons):
             row = idx // 4
             col = idx % 4
-            item_frame = Frame(self.zone_achat, width=250, height=280, bg="white")
+            item_frame = Frame(self.zone_achat, width=250, height=280)
             item_frame.grid(row=row, column=col, padx=10, pady=10)
             item_frame.grid_propagate(False)
             item_frame.pack_propagate(False)
