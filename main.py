@@ -43,7 +43,7 @@ class PageAccueil(Frame):
     
         
         # Bouton pour démarrer le jeu
-        bouton_jouer = Button(self, text="lancer !", font=("Arial", 14),
+        bouton_jouer = Button(self, text="Lancer", font=("Arial", 14),
                              command=lambda: controleur.afficher_page(InterfaceGraphique),
                              width=20, height=2)
         bouton_jouer.pack(pady=20)
