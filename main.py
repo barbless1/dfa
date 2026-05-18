@@ -164,13 +164,13 @@ class InterfaceGraphique(Frame):
         self.afficher_des()
 
     def preparer_relance(self):
-        if not self.lancer_effectue or self.lancees_restantes <= 0:
+        if not self.lancer_effectue or self.lancees_restantes <= 1:
             return
         self.relaunch_ready = True
         self.canvas.itemconfig(self.bras_id, image=self.img_bras)
 
     def relancer_non_gardes(self):
-        if self.lancees_restantes <= 0:
+        if self.lancees_restantes <= 1:
             self.afficher_resultat()
             return
         for i in range(5):
@@ -179,7 +179,7 @@ class InterfaceGraphique(Frame):
         self.lancees_restantes -= 1
         self.afficher_des()
 
-        if self.lancees_restantes <= 0:
+        if self.lancees_restantes <= 1:
             self.afficher_resultat()
 
     def afficher_resultat(self):
