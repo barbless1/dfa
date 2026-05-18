@@ -88,6 +88,11 @@ class InterfaceGraphique(Frame):
         self.bouton_relancer.pack(pady=10)
         self.bouton_relancer.place(x=1920 / 2 - 100, y=1080 / 2 + 150)
 
+        self.etiquette_combinaison = Label(self, text="Combinaison : -", font=("Arial", 18), fg="blue")
+        self.etiquette_combinaison.place(x=1920 / 2, y=1080 / 2 + 300)
+        self.etiquette_score = Label(self, text="Score : -", font=("Arial", 18), fg="blue")
+        self.etiquette_score.place(x=1920 / 2, y=1080 / 2 + 340)
+
         # Mouvement main
         self.img_bras = PhotoImage(file='illustration/main_fermé.png')
         self.img_bras_ouverte = PhotoImage(file='illustration/main_ouverte.png')
@@ -141,8 +146,8 @@ class InterfaceGraphique(Frame):
         for i, valeur in enumerate(self.valeurs_des):
             couleur = "green" if self.des_gardes[i] else "white"
             des_id = self.canvas.create_rectangle(x, y, x + 50, y + 50, fill=couleur)
-            self.canvas.create_text(x + 25, y + 25, text=str(valeur), font=("Arial", 18))
-            self.des_ids.append(des_id)
+            texte_id = self.canvas.create_text(x + 25, y + 25, text=str(valeur), font=("Arial", 18))
+            self.des_ids.extend([des_id, texte_id])
 
             bouton = Button(self, text="Garder", command=lambda idx=i: self.garder_de(idx))
             bouton.place(x=x + 10, y=y + 60)
@@ -182,12 +187,34 @@ class InterfaceGraphique(Frame):
         if self.lancees_restantes <= 1:
             self.afficher_resultat()
 
+    def nom_combinaison(self):
+        valeurs = sorted(self.valeurs_des)
+        frequence = {val: valeurs.count(val) for val in set(valeurs)}
+        counts = sorted(frequence.values())
+        est_suite = len(set(valeurs)) == 5 and valeurs[-1] - valeurs[0] == 4
+
+        if counts == [5]:
+            return "Yahtzee"
+        if est_suite:
+            return "Suite"
+        if counts == [2, 3]:
+            return "Full"
+        if counts == [1, 4]:
+            return "Carré"
+        if counts == [1, 1, 3]:
+            return "Brelan"
+        if counts == [1, 2, 2]:
+            return "Double paire"
+        if counts == [1, 1, 1, 2]:
+            return "Paire"
+        return "Chance"
+
     def afficher_resultat(self):
         """Affiche la combinaison finale et le score."""
-        combinaison = "-".join(map(str, self.valeurs_des))
+        combinaison = ", ".join(map(str, self.valeurs_des))
         score = sum(self.valeurs_des)
-        self.canvas.create_text(1920 / 2, 1080 / 2 + 300, text=f"Combinaison : {combinaison}\nScore : {score}",
-                                 font=("Arial", 18), fill="blue")
+        self.etiquette_combinaison.config(text=f"Combinaison : {self.nom_combinaison()} ({combinaison})")
+        self.etiquette_score.config(text=f"Score : {score}")
 
     def reset_page(self):
         """Réinitialise la page de lancer de dés."""
@@ -200,6 +227,8 @@ class InterfaceGraphique(Frame):
         self.des_gardes = [False] * 5
         self.valeurs_des = []
         self.bouton_relancer.config(state="disabled")
+        self.etiquette_combinaison.config(text="Combinaison : -")
+        self.etiquette_score.config(text="Score : -")
 
       
 '''BOUTIQUE DU JEU : page du shop'''
