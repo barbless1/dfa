@@ -179,7 +179,7 @@ class InterfaceGraphique(Frame):
         self.lancees_restantes -= 1
         self.afficher_des()
 
-        if self.lancees_restantes <= 1:
+        if self.lancees_restantes <= 1s:
             self.afficher_resultat()
 
     def afficher_resultat(self):
