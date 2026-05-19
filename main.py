@@ -1,6 +1,7 @@
 import os
 from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
 from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk#from pyglet import * #Module utilisé pour le son 
+from simpleaudio import * #https://www.piwheels.org/project/simpleaudio/ nécessite alsa et Clang sur linux, tranquille sur windows je crois 
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -57,6 +58,7 @@ class PageAccueil(Frame):
         label_arriere_plan = Label(self, image=arriere_plan)
         label_arriere_plan.image = arriere_plan  # Garder une référence pour éviter que l'image ne soit supprimée
         label_arriere_plan.place(x=0, y=0, relwidth=1, relheight=1)
+        #Simpleaudio fond début jeu 
     
         
         # Bouton pour démarrer le jeu
