@@ -278,7 +278,8 @@ class Shop(Frame):
         self.info_achat = Label(self, text="", font=("Arial", 14), fg="red", bg="white")
         self.info_achat.place(x=980, y=20)
 
-        self.zone_achat = Frame(self, bg="white", bd=2, relief="solid")
+        # Rendre la zone d'achat visuellement 'transparente' en reprenant le fond parent
+        self.zone_achat = Frame(self, bg=parent.cget('bg'), bd=0, relief='flat', highlightthickness=0)
         self.zone_achat.place(x=715, y=45, width=1157, height=768)
 
         self.poisson_images = []
@@ -347,7 +348,7 @@ class Aquarium(Frame):
         label_arriere_plan.image = arriere_plan
         label_arriere_plan.place(relx=0.5, rely=0.5, anchor='center')
 
-        self.zone_aquarium = Frame(self, bg="white", bd=2, relief="solid")
+        self.zone_aquarium = Frame(self, bg=None, bd=0, relief='flat', highlightthickness=0)
         self.zone_aquarium.place(x=715, y=45, width=1157, height=768)
         self.aquarium_images = []
 
