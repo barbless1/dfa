@@ -1,7 +1,7 @@
 import os
 from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
 from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk#from pyglet import * #Module utilisé pour le son 
-from simpleaudio import * #https://www.piwheels.org/project/simpleaudio/ nécessite alsa et Clang sur linux, tranquille sur windows je crois 
+#from simpleaudio import * #https://www.piwheels.org/project/simpleaudio/ nécessite alsa et Clang sur linux, tranquille sur windows je crois 
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -509,11 +509,11 @@ class fonctions_du_jeu:
         combinaisons = []
         
         if self.est_yams():
-            combinaisons.append(("Yams", 50))
+            combinaisons.append(("Yams", 200))
         if self.est_carré():
             combinaisons.append(("Carré", sum(self.liste_valeurs_dès())))
         if self.est_full():
-            combinaisons.append(("Full", 25))
+            combinaisons.append(("Full", 50))
         if self.est_grande_suite():
             combinaisons.append(("Grande Suite", 40))
         if self.est_petite_suite():
