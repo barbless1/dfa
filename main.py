@@ -1,7 +1,7 @@
 import os
 from random import * #Génération de pseudo-hasard pour les mécaniésmes reposant sur l'aléatoire (dés, case opening)
 from tkinter import * #Moteur graphique / Interface from PIL import Image, ImageTk#from pyglet import * #Module utilisé pour le son 
-#from simpleaudio import * #https://www.piwheels.org/project/simpleaudio/ nécessite alsa et Clang sur linux, tranquille sur windows je crois 
+from simpleaudio import * #https://www.piwheels.org/project/simpleaudio/ nécessite alsa et Clang sur linux, tranquille sur windows je crois 
 
 '''PARTIE 0 : Application principale avec pages'''
 class ApplicationPrincipale:
@@ -18,7 +18,7 @@ class ApplicationPrincipale:
         self.conteneur.grid_columnconfigure(0, weight=1)
         
         self.cadres = {}
-        self.monnaie = 0
+        self.monnaie = 2000
         self.achats = set()
         self.poissons = self.charger_poissons()
         
@@ -234,15 +234,30 @@ class InterfaceGraphique(Frame):
             return "Paire"
         return "Chance"
 
+    def calculer_monnaie(self, score, nom_combinaison):
+        bonus = {
+            "Yams": 300,
+            "Suite": 200,
+            "Full": 150,
+            "Carré": 120,
+            "Brelan": 80,
+            "Double paire": 50,
+            "Paire": 20,
+            "Chance": 0,
+        }
+        return score + bonus.get(nom_combinaison, 0)
+
     def afficher_resultat(self):
         """Affiche la combinaison finale et le score."""
         combinaison = ", ".join(map(str, self.valeurs_des))
-        score = sum(self.valeurs_des * 100)
-        self.etiquette_combinaison.config(text=f"Combinaison : {self.nom_combinaison()} ({combinaison})")
+        score = sum(self.valeurs_des)
+        nom = self.nom_combinaison()
+        argent_gagne = self.calculer_monnaie(score, nom)
+        self.etiquette_combinaison.config(text=f"Combinaison : {nom} ({combinaison})")
         self.etiquette_score.config(text=f"Score : {score}")
-        self.etiquette_resultat.config(text=f"{score} points")
+        self.etiquette_resultat.config(text=f"{argent_gagne} points")
         if not self.score_ajoute:
-            self.controleur.monnaie += score
+            self.controleur.monnaie += argent_gagne
             self.score_ajoute = True
             self.update_monnaie_label()
 
@@ -300,7 +315,7 @@ class Shop(Frame):
         for idx, item in enumerate(self.controleur.poissons):
             row = idx // 4
             col = idx % 4
-            item_frame = Frame(self.zone_achat, width=500, height=500)
+            item_frame = Frame(self.zone_achat, width=250, height=280)
             item_frame.grid(row=row, column=col, padx=10, pady=10)
             item_frame.grid_propagate(False)
             item_frame.pack_propagate(False)
@@ -510,11 +525,11 @@ class fonctions_du_jeu:
         combinaisons = []
         
         if self.est_yams():
-            combinaisons.append(("Yams", 200))
+            combinaisons.append(("Yams", 50))
         if self.est_carré():
             combinaisons.append(("Carré", sum(self.liste_valeurs_dès())))
         if self.est_full():
-            combinaisons.append(("Full", 50))
+            combinaisons.append(("Full", 25))
         if self.est_grande_suite():
             combinaisons.append(("Grande Suite", 40))
         if self.est_petite_suite():
