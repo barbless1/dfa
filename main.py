@@ -237,7 +237,7 @@ class InterfaceGraphique(Frame):
     def afficher_resultat(self):
         """Affiche la combinaison finale et le score."""
         combinaison = ", ".join(map(str, self.valeurs_des))
-        score = sum(self.valeurs_des)
+        score = sum(self.valeurs_des * 100)
         self.etiquette_combinaison.config(text=f"Combinaison : {self.nom_combinaison()} ({combinaison})")
         self.etiquette_score.config(text=f"Score : {score}")
         self.etiquette_resultat.config(text=f"{score} points")
@@ -299,7 +299,7 @@ class Shop(Frame):
         for idx, item in enumerate(self.controleur.poissons):
             row = idx // 4
             col = idx % 4
-            item_frame = Frame(self.zone_achat, width=250, height=280)
+            item_frame = Frame(self.zone_achat, width=500, height=500)
             item_frame.grid(row=row, column=col, padx=10, pady=10)
             item_frame.grid_propagate(False)
             item_frame.pack_propagate(False)
